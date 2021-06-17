@@ -442,7 +442,8 @@ class ContentStruct(object):
                 post_type=edit_type,
                 description='',
                 custom_fields=[],
-                post_status='private')
+                #デフォルトを下書きに。
+                post_status='draft')
 
         if post_id is not None:
             self.refresh_from_wp(post_id)
@@ -470,7 +471,8 @@ class ContentStruct(object):
 
     def fill_buffer(self):
         meta = dict(strid="", title="", slug="",
-                cats="", tags="", editformat="HTML", edittype="")
+                cats="", tags="", editformat="markdown", edittype="")
+                #cats="", tags="", editformat="HTML", edittype="")
         meta.update(self.buffer_meta)
 
         meta_text = self.META_TEMPLATE.format(**meta).splitlines()
@@ -528,11 +530,34 @@ class ContentStruct(object):
                 field = dict(key=G.CUSTOM_FIELD_KEY, value=rawtext)
                 struct["custom_fields"].append(field)
 
-            extentions=[]
-            if "extensions" in g_data.env:
-                extensions = g_data.env["extensions"]
-            md = markdown.Markdown(extensions=extensions)
-            struct["description"] = self.html_text = md.convert(rawtext)
+
+
+
+            struct["description"] = self.html_text = markdown.markdown(rawtext, \
+            #extensions=[])
+                extensions=['markdown.extensions.extra', \
+                    'markdown.extensions.nl2br', \
+                    'a_markdown_simple', \
+                    'markdown.extensions.admonition', \
+                    'a_markdown_details', \
+                    'a_markdown_fence'])
+
+
+
+            #extentions=[]
+            #if "extensions" in g_data.env:
+            #    extensions = g_data.env["extensions"]
+            #md = markdown.Markdown(extensions=extensions)
+            #struct["description"] = self.html_text = md.convert(rawtext)
+
+
+
+
+
+
+
+
+
         else:
             struct["description"] = self.html_text = rawtext
 
@@ -542,7 +567,15 @@ class ContentStruct(object):
                 "get_" + self.EDIT_TYPE)(post_id)
 
          # struct buffer meta
-        meta = dict(editformat="HTML",
+
+
+
+
+
+
+
+        meta = dict(editformat="markdown",
+        #meta = dict(editformat="HTML",
                 title=struct["title"],
                 slug=struct["wp_slug"])
 
@@ -567,7 +600,8 @@ class ContentStruct(object):
          #Use Markdown text if exists in custom fields
         for field in struct["custom_fields"]:
             if field["key"] == G.CUSTOM_FIELD_KEY:
-                meta['editformat'] = "HTML"
+                meta['editformat'] = "markdown"
+                #meta['editformat'] = "HTML"
                 self.raw_text = content = field["value"]
                 break
         else:
