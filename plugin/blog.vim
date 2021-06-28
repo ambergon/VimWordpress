@@ -756,9 +756,11 @@ def blog_wise_open_view():
     else:
         # Disable open new Vim pane
         # vim.command(":new")
-        vim.command('setl modifiable')
-        del vim.current.buffer[:]
-        vim.command('setl nomodified')
+
+        vim.command(":enew")
+        #del vim.current.buffer[:]
+        #vim.command('setl modifiable')
+        #vim.command('setl nomodified')
 
     vim.command('setl syntax=blogsyntax')
     vim.command('setl completefunc=Completable')
