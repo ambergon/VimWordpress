@@ -971,7 +971,7 @@ def blog_upload_media(file_path):
 
     name = os.path.basename(file_path)
     filetype = mimetypes.guess_type(file_path)[0]
-    with open(file_path) as f:
+    with open(file_path , 'rb') as f:
         bits = xmlrpc.client.Binary(f.read())
 
     result = g_data.xmlrpc.new_media_object(dict(name = name, type = filetype, bits = bits))
